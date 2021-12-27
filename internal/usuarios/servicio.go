@@ -5,6 +5,9 @@ import "time"
 type Service interface {
 	GetAll() ([]User, error)
 	Store(nombre, apellido, email string, edad int, altura float64, activo bool) (User, error)
+	Update(id int, nombre, apellido, email string, edad int, altura float64, activo bool) (User, error)
+	Delete(id int) error
+	UpdateName(id int, nombre string, edad int) (User, error)
 }
 
 type service struct {
@@ -20,7 +23,13 @@ func (s *service) GetAll() ([]User, error) {
 }
 
 func (s *service) Store(nombre, apellido, email string, edad int, altura float64, activo bool) (User, error) {
-	id := len(users)
+	var id int
+	if len(users) == 0 {
+		id = 1
+	} else {
+		id = users[len(users)-1].ID + 1
+	}
+
 	fechaCreado := time.Now().GoString()
 
 	user, err := s.repository.Store(id, nombre, apellido, email, edad, altura, activo, fechaCreado)
@@ -30,6 +39,21 @@ func (s *service) Store(nombre, apellido, email string, edad int, altura float64
 
 	return user, nil
 }
+
+func (s *service) Update(id int, nombre, apellido, email string, edad int, altura float64, activo bool) (User, error) {
+
+	fechaCreado := time.Now().GoString()
+	return s.repository.Update(id, nombre, apellido, email, edad, altura, activo, fechaCreado)
+}
+
+func (s *service) Delete(id int) error {
+	return s.repository.Delete(id)
+}
+
+func (s *service) UpdateName(id int, nombre string, edad int) (User, error) {
+	return s.repository.UpdateName(id, nombre, edad)
+}
+
 func NewService(repository Repository) Service {
 	return &service{
 		repository: repository,
