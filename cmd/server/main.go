@@ -3,11 +3,15 @@ package main
 import (
 	"github.com/dchaconcarde/proyecto-structurado/cmd/server/handler"
 	"github.com/dchaconcarde/proyecto-structurado/internal/usuarios"
+	"github.com/dchaconcarde/proyecto-structurado/pkg/store"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	repo := usuarios.NewRepository()
+	_ = godotenv.Load()
+	db := store.New(store.FileType, "products.json")
+	repo := usuarios.NewRepository(db)
 	service := usuarios.NewService(repo)
 	us := handler.NewUser(service)
 

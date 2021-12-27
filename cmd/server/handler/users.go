@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/dchaconcarde/proyecto-structurado/internal/usuarios"
@@ -154,5 +155,5 @@ func (u *User) UpdateName() gin.HandlerFunc {
 
 func verifyToken(ctx *gin.Context) bool {
 	token := ctx.GetHeader("token")
-	return token == usuarios.TokenToPass
+	return token == os.Getenv("TOKEN")
 }

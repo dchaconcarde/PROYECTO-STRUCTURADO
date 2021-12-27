@@ -2,10 +2,9 @@ package usuarios
 
 import (
 	"fmt"
-)
 
-var users []User
-var TokenToPass string = "NormalicemosEcharleMayonesaALosFideosConTuco"
+	"github.com/dchaconcarde/proyecto-structurado/pkg/store"
+)
 
 type User struct {
 	ID          int     `json:"id"`
@@ -24,18 +23,40 @@ type Repository interface {
 	Update(id int, nombre, apellido, email string, edad int, altura float64, activo bool, fechaCreado string) (User, error)
 	UpdateName(id int, nombre string, edad int) (User, error)
 	Delete(id int) error
+	LastID() (int, error)
 }
 
-type repository struct{}
+type repository struct {
+	db store.Store
+}
+
+func (r *repository) LastID() (int, error) {
+	var users []User
+	if err := r.db.Read(&users); err != nil {
+		return 0, err
+	}
+	if len(users) == 0 {
+		return 0, nil
+	}
+
+	return users[len(users)-1].ID, nil
+
+}
 
 func (r *repository) GetAll() ([]User, error) {
+	var users []User
+	r.db.Read(&users)
 	return users, nil
 }
 
 func (r *repository) Store(id int, nombre, apellido, email string, edad int, altura float64, activo bool, fechaCreado string) (User, error) {
-
+	var users []User
+	r.db.Read(&users)
 	u := User{id, nombre, apellido, email, edad, altura, activo, fechaCreado}
 	users = append(users, u)
+	if err := r.db.Write(users); err != nil {
+		return User{}, err
+	}
 	return u, nil
 
 }
@@ -51,6 +72,8 @@ func (r *repository) Update(id int, nombre, apellido, email string, edad int, al
 		FechaCreado: fechaCreado,
 	}
 	updated := false
+	var users []User
+	r.db.Read(&users)
 
 	for i := range users {
 		if users[i].ID == id {
@@ -63,6 +86,9 @@ func (r *repository) Update(id int, nombre, apellido, email string, edad int, al
 	if !updated {
 		return User{}, fmt.Errorf("Usuario %d no encontrado", id)
 	}
+	if err := r.db.Write(users); err != nil {
+		return User{}, err
+	}
 
 	return u, nil
 }
@@ -70,6 +96,8 @@ func (r *repository) Update(id int, nombre, apellido, email string, edad int, al
 func (r *repository) Delete(id int) error {
 	deleted := false
 	var index int
+	var users []User
+	r.db.Read(&users)
 	for i := range users {
 		if users[i].ID == id {
 			index = i
@@ -79,13 +107,20 @@ func (r *repository) Delete(id int) error {
 	if !deleted {
 		return fmt.Errorf("Usuario %d no encontrado", id)
 	}
+
 	users = append(users[:index], users[index+1:]...)
+
+	if err := r.db.Write(users); err != nil {
+		return err
+	}
 	return nil
 }
 
 func (r *repository) UpdateName(id int, nombre string, edad int) (User, error) {
 	var u User
 	updated := false
+	var users []User
+	r.db.Read(&users)
 	for i := range users {
 		if users[i].ID == id {
 			users[i].Nombre = nombre
@@ -97,9 +132,14 @@ func (r *repository) UpdateName(id int, nombre string, edad int) (User, error) {
 	if !updated {
 		return User{}, fmt.Errorf("Usuario %d no encontrado", id)
 	}
+	if err := r.db.Write(users); err != nil {
+		return User{}, err
+	}
 	return u, nil
 }
 
-func NewRepository() Repository {
-	return &repository{}
+func NewRepository(db store.Store) Repository {
+	return &repository{
+		db: db,
+	}
 }

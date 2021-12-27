@@ -1,0 +1,63 @@
+[
+  {
+    "id": 3,
+    "nombre": "Mariano",
+    "apellido": "Perez",
+    "email": "juanpi@gmail.com",
+    "edad": 32,
+    "altura": 1.54,
+    "activo": true,
+    "fechaCreado": "time.Date(2021, time.December, 27, 17, 19, 32, 238042000, time.Local)"
+  },
+  {
+    "id": 4,
+    "nombre": "Manuel",
+    "apellido": "Perez",
+    "email": "juanpi@gmail.com",
+    "edad": 24,
+    "altura": 1.54,
+    "activo": true,
+    "fechaCreado": "time.Date(2021, time.December, 27, 17, 19, 32, 669202000, time.Local)"
+  },
+  {
+    "id": 5,
+    "nombre": "Juancho",
+    "apellido": "Perez",
+    "email": "juanpi@gmail.com",
+    "edad": 24,
+    "altura": 1.54,
+    "activo": true,
+    "fechaCreado": "time.Date(2021, time.December, 27, 17, 19, 43, 429008000, time.Local)"
+  },
+  {
+    "id": 6,
+    "nombre": "Manuel",
+    "apellido": "Perez",
+    "email": "juanpi@gmail.com",
+    "edad": 24,
+    "altura": 1.54,
+    "activo": true,
+    "fechaCreado": "time.Date(2021, time.December, 27, 17, 19, 33, 519004000, time.Local)"
+  },
+  {
+    "id": 6,
+    "nombre": "Manuel",
+    "apellido": "Perez",
+    "email": "juanpi@gmail.com",
+    "edad": 24,
+    "altura": 1.54,
+    "activo": true,
+    "fechaCreado": "time.Date(2021, time.December, 27, 17, 19, 33, 519004000, time.Local)"
+  }
+]  {
+
+    "id": 6,
+    "nombre": "Manuel",
+    "apellido": "Perez",
+    "email": "juanpi@gmail.com",
+    "edad": 24,
+    "altura": 1.54,
+    "activo": true,
+    "fechaCreado": "time.Date(2021, time.December, 27, 17, 19, 33, 519004000, time.Local)"
+  }
+]

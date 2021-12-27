@@ -23,16 +23,14 @@ func (s *service) GetAll() ([]User, error) {
 }
 
 func (s *service) Store(nombre, apellido, email string, edad int, altura float64, activo bool) (User, error) {
-	var id int
-	if len(users) == 0 {
-		id = 1
-	} else {
-		id = users[len(users)-1].ID + 1
+	lastID, err := s.repository.LastID()
+	if err != nil {
+		return User{}, err
 	}
-
+	lastID++
 	fechaCreado := time.Now().GoString()
 
-	user, err := s.repository.Store(id, nombre, apellido, email, edad, altura, activo, fechaCreado)
+	user, err := s.repository.Store(lastID, nombre, apellido, email, edad, altura, activo, fechaCreado)
 	if err != nil {
 		return User{}, err
 	}
