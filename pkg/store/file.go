@@ -9,6 +9,7 @@ import (
 type Store interface {
 	Read(data interface{}) error
 	Write(data interface{}) error
+	Remove() error
 }
 
 type Type string
@@ -54,4 +55,12 @@ func New(store Type, fileName string) Store {
 
 type FileStore struct {
 	FileName string
+}
+
+func (fs *FileStore) Remove() error {
+	err := os.Remove(fs.FileName)
+	if err != nil {
+		return err
+	}
+	return nil
 }
