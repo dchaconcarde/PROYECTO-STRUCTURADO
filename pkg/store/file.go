@@ -9,7 +9,6 @@ import (
 type Store interface {
 	Read(data interface{}) error
 	Write(data interface{}) error
-	Remove() error
 }
 
 type Type string
@@ -23,7 +22,7 @@ func (fs *FileStore) Write(data interface{}) error {
 	if err != nil {
 		return err
 	}
-	f, err := os.OpenFile(fs.FileName, os.O_CREATE|os.O_WRONLY, 0644)
+	f, err := os.OpenFile(fs.FileName, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
 		return err
 	}
@@ -55,12 +54,4 @@ func New(store Type, fileName string) Store {
 
 type FileStore struct {
 	FileName string
-}
-
-func (fs *FileStore) Remove() error {
-	err := os.Remove(fs.FileName)
-	if err != nil {
-		return err
-	}
-	return nil
 }

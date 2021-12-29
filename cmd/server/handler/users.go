@@ -1,12 +1,13 @@
 package handler
 
 import (
+	"errors"
 	"fmt"
-	"net/http"
 	"os"
 	"strconv"
 
 	"github.com/dchaconcarde/proyecto-structurado/internal/usuarios"
+	"github.com/dchaconcarde/proyecto-structurado/pkg/web"
 	"github.com/gin-gonic/gin"
 )
 
@@ -29,126 +30,191 @@ func NewUser(service usuarios.Service) *User {
 	}
 }
 
+// ListUsers godoc
+// @Summary List users
+// @Tags Users
+// @Description get users
+// @Accept json
+// @Produce json
+// @Param token header string true "token"
+// @Success 200 {object} web.Response
+// @Router /users [get]
 func (u *User) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
 		if !verifyToken(ctx) {
-			ctx.JSON(401, gin.H{"error": "no tiene autorización"})
+			ctx.JSON(401, web.NewResponse(401, nil, "Token Invalido"))
 			return
 		}
 
 		us, err := u.service.GetAll()
 
 		if err != nil {
-			ctx.JSON(404, gin.H{"error": err.Error()})
+			ctx.JSON(404, web.NewResponse(400, nil, err.Error()))
 			return
 		}
 
 		if us == nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": "No existe ningún usuario en el contexto"})
+			ctx.JSON(400, web.NewResponse(404, nil, "No existe ningún usuario en el contexto"))
 		}
-		ctx.JSON(200, us)
+		ctx.JSON(200, web.NewResponse(200, us, ""))
 	}
 }
 
+// StoreUsers godoc
+// @Summary Store users
+// @Tags Users
+// @Description store users
+// @Accept json
+// @Produce json
+// @Param token header string true "token"
+// @Param user body request true "User to store"
+// @Success 200 {object} web.Response
+// @Router /users [post]
 func (u *User) Store() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
 		if !verifyToken(ctx) {
-			ctx.JSON(401, gin.H{"error": "no tiene autorización"})
+			ctx.JSON(401, web.NewResponse(401, nil, "Token Invalido"))
 			return
 		}
 
 		var req request
 		if err := ctx.ShouldBindJSON(&req); err != nil {
-			ctx.JSON(404, gin.H{"error": err.Error()})
+			ctx.JSON(404, web.NewResponse(400, nil, err.Error()))
+			return
+		}
+
+		err := verifyFields(ctx, req)
+		if err != nil {
 			return
 		}
 		us, err := u.service.Store(req.Nombre, req.Apellido, req.Email, req.Edad, req.Altura, req.Activo)
 		if err != nil {
-			ctx.JSON(404, gin.H{"error": err.Error()})
+			ctx.JSON(404, web.NewResponse(400, nil, err.Error()))
 			return
 		}
-		ctx.JSON(200, us)
+		ctx.JSON(200, web.NewResponse(200, us, ""))
 	}
 }
 
+// UpdateUsers godoc
+// @Summary Store users
+// @Tags Users
+// @Description Update user
+// @Accept json
+// @Produce json
+// @Param token header string true "token"
+// @Param user body request true "User to update"
+// @Param string query string true "User ID to Update"
+// @Success 200 {object} web.Response
+// @Router /users/{id} [put]
 func (u *User) Update() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		if !verifyToken(ctx) {
-			ctx.JSON(401, gin.H{"error": "no tiene autorización"})
+			ctx.JSON(401, web.NewResponse(401, nil, "Token Invalido"))
 			return
 		}
 
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 		if err != nil {
-			ctx.JSON(400, gin.H{"error": "invalid ID"})
+			ctx.JSON(404, web.NewResponse(400, nil, "Invalid ID"))
 			return
 		}
 
 		var req request
 		if err := ctx.ShouldBindJSON(&req); err != nil {
-			ctx.JSON(400, gin.H{"error": err.Error()})
+			ctx.JSON(404, web.NewResponse(400, nil, err.Error()))
+			return
+		}
+
+		err = verifyFields(ctx, req)
+		if err != nil {
 			return
 		}
 
 		us, err := u.service.Update(int(id), req.Nombre, req.Apellido, req.Email, req.Edad, req.Altura, req.Activo)
 		if err != nil {
-			ctx.JSON(404, gin.H{"error": err.Error()})
+			ctx.JSON(404, web.NewResponse(400, nil, err.Error()))
 			return
 		}
-		ctx.JSON(200, us)
+		ctx.JSON(200, web.NewResponse(200, us, ""))
 
 	}
 }
 
+// DeleteUsers godoc
+// @Summary Store users
+// @Tags Users
+// @Description delete user by id
+// @Accept json
+// @Produce json
+// @Param token header string true "token"
+// @Param string query string true "User ID to delete"
+// @Success 200 {object} web.Response
+// @Router /users/{id} [delete]
 func (u *User) Delete() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		if !verifyToken(ctx) {
-			ctx.JSON(401, gin.H{"error": "no tiene autorización"})
+			ctx.JSON(401, web.NewResponse(401, nil, "Token Invalido"))
 			return
 		}
 
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 		if err != nil {
-			ctx.JSON(400, gin.H{"error": "invalid ID"})
+			ctx.JSON(404, web.NewResponse(400, nil, "Invalid ID"))
 			return
 		}
 
 		err = u.service.Delete(int(id))
 		if err != nil {
-			ctx.JSON(400, gin.H{"error": err.Error()})
+			ctx.JSON(404, web.NewResponse(400, nil, err.Error()))
 			return
 		}
-		ctx.JSON(200, gin.H{"data": fmt.Sprintf("El usuario %d ha sido eliminado", id)})
+		ctx.JSON(200, web.NewResponse(200, fmt.Sprintf("El usuario %d ha sido eliminado", id), ""))
 	}
 }
 
+// UpdateNameUsers godoc
+// @Summary Store users
+// @Tags Users
+// @Description update name and age for a user
+// @Accept json
+// @Produce json
+// @Param token header string true "token"
+// @Param string query string true "User ID to update name and age"
+// @Success 200 {object} web.Response
+// @Router /users/{id} [patch]
 func (u *User) UpdateName() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		if !verifyToken(ctx) {
-			ctx.JSON(401, gin.H{"error": "no tiene autorización"})
+			ctx.JSON(401, web.NewResponse(401, nil, "Token Invalido"))
 			return
 		}
 
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 		if err != nil {
-			ctx.JSON(400, gin.H{"error": "invalid ID"})
+			ctx.JSON(404, web.NewResponse(400, nil, "Invalid ID"))
 			return
 		}
 
 		var req request
 		if err := ctx.Bind(&req); err != nil {
-			ctx.JSON(400, gin.H{"error": err.Error()})
+			ctx.JSON(404, web.NewResponse(400, nil, err.Error()))
+			return
+		}
+
+		err = verifyFields(ctx, req)
+		if err != nil {
 			return
 		}
 
 		us, err := u.service.UpdateName(int(id), req.Nombre, req.Edad)
 		if err != nil {
-			ctx.JSON(404, gin.H{"error": err.Error()})
+			ctx.JSON(404, web.NewResponse(400, nil, err.Error()))
 			return
 		}
-		ctx.JSON(200, us)
+		ctx.JSON(200, web.NewResponse(200, us, ""))
 
 	}
 }
@@ -156,4 +222,29 @@ func (u *User) UpdateName() gin.HandlerFunc {
 func verifyToken(ctx *gin.Context) bool {
 	token := ctx.GetHeader("token")
 	return token == os.Getenv("TOKEN")
+}
+
+func verifyFields(ctx *gin.Context, req request) error {
+	if req.Nombre == "" {
+		ctx.JSON(400, web.NewResponse(401, nil, "El nombre de usuario es requerido"))
+		return errors.New("Error")
+	}
+	if req.Apellido == "" {
+		ctx.JSON(400, web.NewResponse(401, nil, "El apellido de usuario es requerido"))
+		return errors.New("Error")
+	}
+	if req.Email == "" {
+		ctx.JSON(400, web.NewResponse(401, nil, "El email de usuario es requerido"))
+		return errors.New("Error")
+	}
+	if req.Edad == 0 {
+		ctx.JSON(400, web.NewResponse(401, nil, "La edadde usuario es requerido"))
+		return errors.New("Error")
+	}
+	if req.Activo == false {
+		ctx.JSON(400, web.NewResponse(401, nil, "El estado de usuario es requerido"))
+		return errors.New("Error")
+	}
+	return nil
+
 }

@@ -40,16 +40,6 @@
     "fechaCreado": "time.Date(2021, time.December, 27, 18, 24, 43, 423463000, time.Local)"
   },
   {
-    "id": 10,
-    "nombre": "Manuel",
-    "apellido": "Perez",
-    "email": "juanpi@gmail.com",
-    "edad": 24,
-    "altura": 1.54,
-    "activo": true,
-    "fechaCreado": "time.Date(2021, time.December, 27, 18, 26, 20, 987635000, time.Local)"
-  },
-  {
     "id": 11,
     "nombre": "Manuel",
     "apellido": "Perez",
@@ -68,16 +58,6 @@
     "altura": 1.54,
     "activo": true,
     "fechaCreado": "time.Date(2021, time.December, 27, 18, 26, 22, 74113000, time.Local)"
-  },
-  {
-    "id": 13,
-    "nombre": "Manuel",
-    "apellido": "Perez",
-    "email": "juanpi@gmail.com",
-    "edad": 24,
-    "altura": 1.54,
-    "activo": true,
-    "fechaCreado": "time.Date(2021, time.December, 27, 18, 36, 26, 550243000, time.Local)"
   },
   {
     "id": 14,

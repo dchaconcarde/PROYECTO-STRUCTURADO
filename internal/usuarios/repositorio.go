@@ -96,22 +96,19 @@ func (r *repository) Update(id int, nombre, apellido, email string, edad int, al
 func (r *repository) Delete(id int) error {
 	deleted := false
 	var users []User
-	var copyUsers []User
 
 	r.db.Read(&users)
 
 	for i := range users {
 		if users[i].ID == id {
 			deleted = true
-			copyUsers = append(users[:i], users[i+1:]...)
+			users = append(users[:i], users[i+1:]...)
 		}
 	}
 	if !deleted {
 		return fmt.Errorf("Usuario %d no encontrado", id)
 	}
-	r.db.Remove()
-
-	if err := r.db.Write(&copyUsers); err != nil {
+	if err := r.db.Write(&users); err != nil {
 		return err
 	}
 	return nil
