@@ -32,6 +32,8 @@ func main() {
 	us := handler.NewUser(service)
 	r := gin.Default()
 
+	r.Use(handler.NewMiddleware)
+
 	docs.SwaggerInfo.Host = os.Getenv("HOST")
 	r.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 

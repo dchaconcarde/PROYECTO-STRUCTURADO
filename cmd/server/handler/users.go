@@ -3,7 +3,6 @@ package handler
 import (
 	"errors"
 	"fmt"
-	"os"
 	"strconv"
 
 	"github.com/dchaconcarde/proyecto-structurado/internal/usuarios"
@@ -42,11 +41,6 @@ func NewUser(service usuarios.Service) *User {
 func (u *User) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
-		if !verifyToken(ctx) {
-			ctx.JSON(401, web.NewResponse(401, nil, "Token Invalido"))
-			return
-		}
-
 		us, err := u.service.GetAll()
 
 		if err != nil {
@@ -73,11 +67,6 @@ func (u *User) GetAll() gin.HandlerFunc {
 // @Router /users [post]
 func (u *User) Store() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-
-		if !verifyToken(ctx) {
-			ctx.JSON(401, web.NewResponse(401, nil, "Token Invalido"))
-			return
-		}
 
 		var req request
 		if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -111,10 +100,6 @@ func (u *User) Store() gin.HandlerFunc {
 // @Router /users/{id} [put]
 func (u *User) Update() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		if !verifyToken(ctx) {
-			ctx.JSON(401, web.NewResponse(401, nil, "Token Invalido"))
-			return
-		}
 
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 		if err != nil {
@@ -155,10 +140,6 @@ func (u *User) Update() gin.HandlerFunc {
 // @Router /users/{id} [delete]
 func (u *User) Delete() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		if !verifyToken(ctx) {
-			ctx.JSON(401, web.NewResponse(401, nil, "Token Invalido"))
-			return
-		}
 
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 		if err != nil {
@@ -187,10 +168,6 @@ func (u *User) Delete() gin.HandlerFunc {
 // @Router /users/{id} [patch]
 func (u *User) UpdateName() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		if !verifyToken(ctx) {
-			ctx.JSON(401, web.NewResponse(401, nil, "Token Invalido"))
-			return
-		}
 
 		id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 		if err != nil {
@@ -217,11 +194,6 @@ func (u *User) UpdateName() gin.HandlerFunc {
 		ctx.JSON(200, web.NewResponse(200, us, ""))
 
 	}
-}
-
-func verifyToken(ctx *gin.Context) bool {
-	token := ctx.GetHeader("token")
-	return token == os.Getenv("TOKEN")
 }
 
 func verifyFields(ctx *gin.Context, req request) error {
