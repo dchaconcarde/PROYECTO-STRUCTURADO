@@ -15,5 +15,5 @@ func NewMiddleware(ctx *gin.Context) {
 	} else if token != os.Getenv("TOKEN") {
 		ctx.AbortWithStatusJSON(401, web.NewResponse(401, nil, "token inválido"))
 	}
-
+	ctx.Next()
 }
