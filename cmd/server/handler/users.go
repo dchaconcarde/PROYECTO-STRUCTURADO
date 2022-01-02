@@ -88,7 +88,7 @@ func (u *User) Store() gin.HandlerFunc {
 }
 
 // UpdateUsers godoc
-// @Summary Store users
+// @Summary Update users
 // @Tags Users
 // @Description Update user
 // @Accept json
@@ -129,7 +129,7 @@ func (u *User) Update() gin.HandlerFunc {
 }
 
 // DeleteUsers godoc
-// @Summary Store users
+// @Summary Delete users
 // @Tags Users
 // @Description delete user by id
 // @Accept json
@@ -157,7 +157,7 @@ func (u *User) Delete() gin.HandlerFunc {
 }
 
 // UpdateNameUsers godoc
-// @Summary Store users
+// @Summary UpdateName users
 // @Tags Users
 // @Description update name and age for a user
 // @Accept json

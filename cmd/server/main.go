@@ -32,13 +32,11 @@ func main() {
 	us := handler.NewUser(service)
 	r := gin.Default()
 
-	r.Use(handler.NewMiddleware)
-
 	docs.SwaggerInfo.Host = os.Getenv("HOST")
 	r.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	usersGroup := r.Group("/users")
-
+	usersGroup.Use(handler.NewMiddleware)
 	usersGroup.POST("/", us.Store())
 	usersGroup.GET("/", us.GetAll())
 	usersGroup.PUT("/:id", us.Update())
