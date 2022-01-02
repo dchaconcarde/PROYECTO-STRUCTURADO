@@ -48,8 +48,8 @@ func (s *service) Delete(id int) error {
 	return s.repository.Delete(id)
 }
 
-func (s *service) UpdateName(id int, nombre string, edad int) (User, error) {
-	return s.repository.UpdateName(id, nombre, edad)
+func (s *service) UpdateName(id int, apellido string, edad int) (User, error) {
+	return s.repository.UpdateName(id, apellido, edad)
 }
 
 func NewService(repository Repository) Service {

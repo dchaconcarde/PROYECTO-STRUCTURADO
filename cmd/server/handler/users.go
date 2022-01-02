@@ -156,14 +156,20 @@ func (u *User) Delete() gin.HandlerFunc {
 	}
 }
 
+type updateNameRequest struct {
+	Apellido string
+	Edad     int
+}
+
 // UpdateNameUsers godoc
 // @Summary UpdateName users
 // @Tags Users
-// @Description update name and age for a user
+// @Description update lastname and age for a user
 // @Accept json
 // @Produce json
 // @Param token header string true "token"
-// @Param string query string true "User ID to update name and age"
+// @Param string query string true "User ID to update lastName and age"
+// @Param user body updateNameRequest true "User lastName and age"
 // @Success 200 {object} web.Response
 // @Router /users/{id} [patch]
 func (u *User) UpdateName() gin.HandlerFunc {
@@ -186,7 +192,7 @@ func (u *User) UpdateName() gin.HandlerFunc {
 			return
 		}
 
-		us, err := u.service.UpdateName(int(id), req.Nombre, req.Edad)
+		us, err := u.service.UpdateName(int(id), req.Apellido, req.Edad)
 		if err != nil {
 			ctx.JSON(404, web.NewResponse(400, nil, err.Error()))
 			return
@@ -213,7 +219,7 @@ func verifyFields(ctx *gin.Context, req request) error {
 		ctx.JSON(400, web.NewResponse(401, nil, "La edadde usuario es requerido"))
 		return errors.New("Error")
 	}
-	if req.Activo == false {
+	if !req.Activo {
 		ctx.JSON(400, web.NewResponse(401, nil, "El estado de usuario es requerido"))
 		return errors.New("Error")
 	}

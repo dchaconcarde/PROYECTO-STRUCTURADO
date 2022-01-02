@@ -113,7 +113,7 @@ var doc = `{
                 "tags": [
                     "Users"
                 ],
-                "summary": "Store users",
+                "summary": "Update users",
                 "parameters": [
                     {
                         "type": "string",
@@ -159,7 +159,7 @@ var doc = `{
                 "tags": [
                     "Users"
                 ],
-                "summary": "Store users",
+                "summary": "Delete users",
                 "parameters": [
                     {
                         "type": "string",
@@ -196,7 +196,7 @@ var doc = `{
                 "tags": [
                     "Users"
                 ],
-                "summary": "Store users",
+                "summary": "UpdateName users",
                 "parameters": [
                     {
                         "type": "string",
@@ -207,10 +207,19 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "description": "User ID to update name and age",
+                        "description": "User ID to update lastName and age",
                         "name": "string",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "description": "User lastName and age",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handler.updateNameRequest"
+                        }
                     }
                 ],
                 "responses": {
@@ -245,6 +254,17 @@ var doc = `{
                 },
                 "nombre": {
                     "type": "string"
+                }
+            }
+        },
+        "handler.updateNameRequest": {
+            "type": "object",
+            "properties": {
+                "apellido": {
+                    "type": "string"
+                },
+                "edad": {
+                    "type": "integer"
                 }
             }
         },

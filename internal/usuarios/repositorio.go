@@ -114,14 +114,14 @@ func (r *repository) Delete(id int) error {
 	return nil
 }
 
-func (r *repository) UpdateName(id int, nombre string, edad int) (User, error) {
+func (r *repository) UpdateName(id int, apellido string, edad int) (User, error) {
 	var u User
 	updated := false
 	var users []User
 	r.db.Read(&users)
 	for i := range users {
 		if users[i].ID == id {
-			users[i].Nombre = nombre
+			users[i].Apellido = apellido
 			users[i].Edad = edad
 			updated = true
 			u = users[i]
