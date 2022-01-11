@@ -44,12 +44,12 @@ func (u *User) GetAll() gin.HandlerFunc {
 		us, err := u.service.GetAll()
 
 		if err != nil {
-			ctx.JSON(404, web.NewResponse(400, nil, err.Error()))
+			ctx.JSON(400, web.NewResponse(400, nil, err.Error()))
 			return
 		}
 
 		if us == nil {
-			ctx.JSON(400, web.NewResponse(404, nil, "No existe ningún usuario en el contexto"))
+			ctx.JSON(400, web.NewResponse(400, nil, "No existe ningún usuario en el contexto"))
 		}
 		ctx.JSON(200, web.NewResponse(200, us, ""))
 	}
